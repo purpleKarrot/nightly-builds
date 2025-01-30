@@ -12,6 +12,7 @@ concurrency:
 jobs:
   tests:
     strategy:
+      fail-fast: false
       matrix:
         conf:
           - build-name: ASan
@@ -47,10 +48,14 @@ jobs:
         with:
           repository: ${{ matrix.proj.repository }}
 
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
       - name: Dashboard Build
         uses: purpleKarrot/cmake-action@master
         with:
           build-name: ${{ matrix.conf.build-name }}
+          cmake-generator: Ninja
           coverage-command: ${{ matrix.conf.coverage-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
           submit-url: "https://ci.purplekarrot.net/api/submit?project=${{ matrix.proj.name }}"
