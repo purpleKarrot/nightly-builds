@@ -41,6 +41,7 @@ jobs:
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
     runs-on: ubuntu-24.04
+    env: ${{ matrix.conf.env }}
 
     steps:
       - name: Checkout Source Code
