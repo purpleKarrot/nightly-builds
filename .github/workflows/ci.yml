@@ -28,6 +28,7 @@ jobs:
               CC: clang-18
               CXX: clazy
               CLANGXX: clang++-18
+              LLVM_ROOT: /usr/lib/llvm-18
           - build-name: Coverage
             coverage-command: gcov-14
             env:
