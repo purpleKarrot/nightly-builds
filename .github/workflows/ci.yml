@@ -23,11 +23,10 @@ jobs:
               CFLAGS: -fno-omit-frame-pointer -fsanitize=address
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
           - build-name: Clazy
-            dependencies: clazy
             env:
-              CC: clang-15
+              CC: clang-18
               CXX: clazy
-              CLANGXX: clang++-15
+              CLANGXX: clang++-18
           - build-name: Coverage
             coverage-command: gcov-14
             env:
@@ -93,6 +92,15 @@ jobs:
           sudo apt-get -qq update
           sudo apt-get -qq install -y --no-install-recommends ninja-build \
             ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
+
+      - name:  Build clazy
+        if: env.CXX == 'clazy'
+        run: |
+          git clone --branch 1.13 --depth 1 https://github.com/KDE/clazy.git
+          env CXX=$CLANGXX cmake -S clazy -B clazy-build -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake --build clazy-build
+          sudo cmake --install clazy-build
+          rm -rf clazy clazy-build
 
       - name: Dashboard Build
         uses: purpleKarrot/cmake-action@master
