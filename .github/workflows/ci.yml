@@ -3,7 +3,7 @@ on:
   push:
     branches: [master]
   schedule:
-    - cron: "49 02 * * *"
+    - cron: "49 04 * * *"
 
 concurrency:
   group: ${{ github.ref }}
