@@ -25,9 +25,9 @@ jobs:
           - build-name: Clazy
             dependencies: clazy
             env:
-              CC: clang-18
+              CC: clang-15
               CXX: clazy
-              CLANGXX: clang++-18
+              CLANGXX: clang++-15
           - build-name: Coverage
             coverage-command: gcov-14
             env:
@@ -65,14 +65,18 @@ jobs:
         proj:
           - name: Example
             repository: purpleKarrot/Example
+            use-launchers: ON
           - name: Bitcoin
             repository: bitcoin/bitcoin
             dependencies: libboost-dev libevent-dev
+            use-launchers: OFF
           - name: secp256k1
             repository: bitcoin-core/secp256k1
+            use-launchers: OFF
           - name: Libmultiprocess
             repository: chaincodelabs/libmultiprocess
             dependencies: capnproto libcapnp-dev
+            use-launchers: OFF
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
     runs-on: ubuntu-24.04
@@ -99,3 +103,4 @@ jobs:
           memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
           submit-url: "https://ci.purplekarrot.net/api/submit?project=${{ matrix.proj.name }}"
+          use-launchers: ${{ matrix.proj.use-launchers }}
