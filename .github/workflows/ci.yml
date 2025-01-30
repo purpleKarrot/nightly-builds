@@ -1,0 +1,57 @@
+name: Nightly Builds
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "49 02 * * *"
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        conf:
+          - build-name: ASan
+            memorycheck-type: AddressSanitizer
+            env:
+              CC: clang-18
+              CXX: clang++-18
+              CFLAGS: -fno-omit-frame-pointer -fsanitize=address
+              CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
+          - build-name: Coverage
+            coverage-command: gcov-14
+            env:
+              CC: gcc-14
+              CXX: g++-14
+              CFLAGS: --coverage
+              CXXFLAGS: --coverage
+        proj:
+          - name: Example
+            repository: purpleKarrot/Example
+          - name: Bitcoin
+            repository: bitcoin/bitcoin
+          - name: secp256k1
+            repository: bitcoin-core/secp256k1
+          - name: Libmultiprocess
+            repository: chaincodelabs/libmultiprocess
+
+    name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.proj.repository }}
+
+      - name: Dashboard Build
+        uses: purpleKarrot/cmake-action@master
+        with:
+          build-name: ${{ matrix.conf.build-name }}
+          coverage-command: ${{ matrix.conf.coverage-command }}
+          memorycheck-type: ${{ matrix.conf.memorycheck-type }}
+          submit-url: "https://ci.purplekarrot.net/api/submit?project=${{ matrix.proj.name }}"
+          use-launchers: ON
