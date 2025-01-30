@@ -92,6 +92,9 @@ jobs:
           - name: Example
             repository: purpleKarrot/Example
             use-launchers: ON
+          - name: beman.exemplar
+            repository: bemanproject/exemplar
+            use-launchers: ON
           - name: Bitcoin
             repository: bitcoin/bitcoin
             dependencies: libboost-dev libevent-dev
