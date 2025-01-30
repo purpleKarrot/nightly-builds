@@ -22,6 +22,12 @@ jobs:
               CXX: clang++-18
               CFLAGS: -fno-omit-frame-pointer -fsanitize=address
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
+          - build-name: Clazy
+            dependencies: clazy
+            env:
+              CC: clang-18
+              CXX: clazy
+              CLANGXX: clang++-18
           - build-name: Coverage
             coverage-command: gcov-14
             env:
@@ -29,15 +35,44 @@ jobs:
               CXX: g++-14
               CFLAGS: --coverage
               CXXFLAGS: --coverage
+          - build-name: MSan
+            memorycheck-type: MemorySanitizer
+            env:
+              CC: clang-18
+              CXX: clang++-18
+              CFLAGS: -fno-omit-frame-pointer -fsanitize=memory
+              CXXFLAGS: -fno-omit-frame-pointer -fsanitize=memory
+          - build-name: TSan
+            memorycheck-type: ThreadSanitizer
+            env:
+              CC: clang-18
+              CXX: clang++-18
+              CFLAGS: -fno-omit-frame-pointer -fsanitize=thread
+              CXXFLAGS: -fno-omit-frame-pointer -fsanitize=thread
+          - build-name: UBSan
+            memorycheck-type: UndefinedBehaviorSanitizer
+            env:
+              CC: clang-18
+              CXX: clang++-18
+              CFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
+              CXXFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
+          - build-name: Valgrind
+            dependencies: valgrind
+            memorycheck-command: valgrind
+            env:
+              CC: gcc-14
+              CXX: g++-14
         proj:
           - name: Example
             repository: purpleKarrot/Example
           - name: Bitcoin
             repository: bitcoin/bitcoin
+            dependencies: libboost-dev
           - name: secp256k1
             repository: bitcoin-core/secp256k1
           - name: Libmultiprocess
             repository: chaincodelabs/libmultiprocess
+            dependencies: capnproto
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
     runs-on: ubuntu-24.04
@@ -49,8 +84,11 @@ jobs:
         with:
           repository: ${{ matrix.proj.repository }}
 
-      - name: Setup Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
+      - name: Install Dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install -y --no-install-recommends ninja \
+            ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
 
       - name: Dashboard Build
         uses: purpleKarrot/cmake-action@master
@@ -58,6 +96,7 @@ jobs:
           build-name: ${{ matrix.conf.build-name }}
           cmake-generator: Ninja
           coverage-command: ${{ matrix.conf.coverage-command }}
+          memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
           submit-url: "https://ci.purplekarrot.net/api/submit?project=${{ matrix.proj.name }}"
           use-launchers: ON
