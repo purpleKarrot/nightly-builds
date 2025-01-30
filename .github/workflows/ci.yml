@@ -23,6 +23,7 @@ jobs:
               CFLAGS: -fno-omit-frame-pointer -fsanitize=address
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
           - build-name: Clazy
+            dependencies: llvm-18-dev libclang-18-dev
             env:
               CC: clang-18
               CXX: clazy
