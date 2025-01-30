@@ -58,7 +58,7 @@ jobs:
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
           - build-name: Valgrind
             dependencies: valgrind
-            memorycheck-command: valgrind
+            memorycheck-command: /usr/bin/valgrind
             env:
               CC: gcc-14
               CXX: g++-14
@@ -67,12 +67,12 @@ jobs:
             repository: purpleKarrot/Example
           - name: Bitcoin
             repository: bitcoin/bitcoin
-            dependencies: libboost-dev
+            dependencies: libboost-dev libevent-dev
           - name: secp256k1
             repository: bitcoin-core/secp256k1
           - name: Libmultiprocess
             repository: chaincodelabs/libmultiprocess
-            dependencies: capnproto
+            dependencies: capnproto libcapnp-dev
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
     runs-on: ubuntu-24.04
