@@ -87,7 +87,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get -qq update
-          sudo apt-get -qq install -y --no-install-recommends ninja \
+          sudo apt-get -qq install -y --no-install-recommends ninja-build \
             ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
 
       - name: Dashboard Build
