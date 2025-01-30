@@ -22,6 +22,7 @@ jobs:
               CXX: clang++-18
               CFLAGS: -fno-omit-frame-pointer -fsanitize=address
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
+
           - build-name: Clazy
             dependencies: llvm-18-dev libclang-18-dev
             env:
@@ -29,6 +30,7 @@ jobs:
               CXX: clazy
               CLANGXX: clang++-18
               LLVM_ROOT: /usr/lib/llvm-18
+
           - build-name: Coverage
             coverage-command: gcov-14
             env:
@@ -36,6 +38,7 @@ jobs:
               CXX: g++-14
               CFLAGS: --coverage
               CXXFLAGS: --coverage
+
           - build-name: MSan
             memorycheck-type: MemorySanitizer
             env:
@@ -43,6 +46,7 @@ jobs:
               CXX: clang++-18
               CFLAGS: -fno-omit-frame-pointer -fsanitize=memory
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=memory
+
           - build-name: TSan
             memorycheck-type: ThreadSanitizer
             env:
@@ -50,6 +54,21 @@ jobs:
               CXX: clang++-18
               CFLAGS: -fno-omit-frame-pointer -fsanitize=thread
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=thread
+
+          - build-name: Lint
+            dependencies: cppcheck iwyu
+            config-options: >
+              -DCMAKE_C_CPPCHECK=cppcheck
+              -DCMAKE_C_CLANG_TIDY=clang-tidy-18
+              -DCMAKE_C_INCLUDE_WHAT_YOU_USE=iwyu
+              -DCMAKE_CXX_CPPCHECK=cppcheck
+              -DCMAKE_CXX_CLANG_TIDY=clang-tidy-18
+              -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=iwyu
+              -DCMAKE_LINK_WHAT_YOU_USE=ON
+            env:
+              CC: gcc-14
+              CXX: g++-14
+
           - build-name: UBSan
             memorycheck-type: UndefinedBehaviorSanitizer
             env:
@@ -57,12 +76,14 @@ jobs:
               CXX: clang++-18
               CFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
+
           - build-name: Valgrind
             dependencies: valgrind
             memorycheck-command: /usr/bin/valgrind
             env:
               CC: gcc-14
               CXX: g++-14
+
         proj:
           - name: Example
             repository: purpleKarrot/Example
@@ -109,6 +130,7 @@ jobs:
         with:
           build-name: ${{ matrix.conf.build-name }}
           cmake-generator: Ninja
+          config-options: ${{ matrix.conf.config-options }}
           coverage-command: ${{ matrix.conf.coverage-command }}
           memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
