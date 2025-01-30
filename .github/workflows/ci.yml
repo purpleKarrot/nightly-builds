@@ -55,19 +55,23 @@ jobs:
               CFLAGS: -fno-omit-frame-pointer -fsanitize=thread
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=thread
 
-          - build-name: Lint
-            dependencies: cppcheck iwyu
+          - build-name: IWYU
+            dependencies: iwyu
             config-options: >
-              -DCMAKE_C_CPPCHECK=cppcheck
-              -DCMAKE_C_CLANG_TIDY=clang-tidy-18
               -DCMAKE_C_INCLUDE_WHAT_YOU_USE=iwyu
-              -DCMAKE_CXX_CPPCHECK=cppcheck
-              -DCMAKE_CXX_CLANG_TIDY=clang-tidy-18
               -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=iwyu
               -DCMAKE_LINK_WHAT_YOU_USE=ON
             env:
-              CC: gcc-14
-              CXX: g++-14
+              CC: clang-17
+              CXX: clang++-17
+
+          - build-name: Tidy
+            config-options: >
+              -DCMAKE_C_CLANG_TIDY=clang-tidy-18
+              -DCMAKE_CXX_CLANG_TIDY=clang-tidy-18
+            env:
+              CC: clang-18
+              CXX: clang++-18
 
           - build-name: UBSan
             memorycheck-type: UndefinedBehaviorSanitizer
