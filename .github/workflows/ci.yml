@@ -1,9 +1,7 @@
 name: Nightly Builds
 on:
-  push:
-    branches: [master]
-  schedule:
-    - cron: "49 04 * * *"
+  schedule: [{ cron: "49 04 * * *" }]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.ref }}
@@ -118,7 +116,7 @@ jobs:
           sudo apt-get -qq install -y --no-install-recommends ninja-build \
             ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
 
-      - name:  Build clazy
+      - name: Build clazy
         if: env.CXX == 'clazy'
         run: |
           git clone --branch 1.13 --depth 1 https://github.com/KDE/clazy.git
