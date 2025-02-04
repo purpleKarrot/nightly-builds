@@ -10,6 +10,7 @@ concurrency:
 jobs:
   tests:
     strategy:
+      fail-fast: false
       matrix:
         conf:
           - build-name: Ubuntu
