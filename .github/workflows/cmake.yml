@@ -1,6 +1,6 @@
 name: CMake Nightly
 on:
-  schedule: [{ cron: "49 06 * * *" }]
+  schedule: [{ cron: "49 05 * * *" }]
   workflow_dispatch:
 
 concurrency:
@@ -28,6 +28,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
+        id: checkout
         uses: actions/checkout@v4
         with:
           repository: Kitware/CMake
@@ -36,5 +37,6 @@ jobs:
         uses: purpleKarrot/cmake-action@master
         with:
           build-name: ${{ matrix.conf.build-name }}
+          change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: ${{ matrix.conf.cmake-generator }}
           submit-url: "https://ci.purplekarrot.net/api/submit?project=CMake"
