@@ -113,9 +113,10 @@ jobs:
           repository: ${{ matrix.proj.repository }}
 
       - name: Install Dependencies
+        if: matrix.conf.dependencies || matrix.proj.dependencies
         run: |
           sudo apt-get -qq update
-          sudo apt-get -qq install -y --no-install-recommends ninja-build \
+          sudo apt-get -qq install -y --no-install-recommends \
             ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
 
       - name: Build clazy
