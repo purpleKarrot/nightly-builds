@@ -15,15 +15,12 @@ jobs:
         conf:
           - build-name: Ubuntu
             runs-on: ubuntu-latest
-            cmake-generator: Unix Makefiles
           - build-name: MacOS
             runs-on: macos-latest
-            cmake-generator: Xcode
           - build-name: Windows
             runs-on: windows-2022
-            cmake-generator: Visual Studio 17 2022
 
-    name: ${{ matrix.conf.build-name }} (${{ matrix.conf.cmake-generator }})
+    name: ${{ matrix.conf.build-name }}
     runs-on: ${{ matrix.conf.runs-on }}
 
     steps:
@@ -38,5 +35,5 @@ jobs:
         with:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
-          cmake-generator: ${{ matrix.conf.cmake-generator }}
+          cmake-generator: Ninja Multi-Config
           submit-url: "https://ci.purplekarrot.net/api/submit?project=CMake"
