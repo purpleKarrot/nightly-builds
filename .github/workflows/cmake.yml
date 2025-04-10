@@ -14,11 +14,11 @@ jobs:
       matrix:
         conf:
           - build-name: Ubuntu
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-24.04
           - build-name: MacOS
-            runs-on: macos-latest
+            runs-on: macos-15
           - build-name: Windows
-            runs-on: windows-2022
+            runs-on: windows-2025
 
     name: ${{ matrix.conf.build-name }}
     runs-on: ${{ matrix.conf.runs-on }}
