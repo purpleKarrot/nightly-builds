@@ -32,10 +32,14 @@ jobs:
         with:
           repository: Kitware/CMake
 
+      - name: Visual Studio build environment
+        uses: seanmiddleditch/gha-setup-vsdevenv@master
+        if: matrix.conf.runs-on == 'windows-2025'
+
       - name: Dashboard Build
         uses: purpleKarrot/cmake-action@master
         with:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
-          cmake-generator: Ninja Multi-Config
+          cmake-generator: Ninja
           submit-url: "https://ci.purplekarrot.net/api/submit?project=CMake"
