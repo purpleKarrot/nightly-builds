@@ -128,6 +128,9 @@ jobs:
           sudo cmake --install clazy-build
           rm -rf clazy clazy-build
 
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+
       - name: Dashboard Build
         uses: purpleKarrot/cmake-action@master
         with:
