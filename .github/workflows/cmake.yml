@@ -15,7 +15,9 @@ jobs:
         conf:
           - build-name: Ubuntu
             runs-on: ubuntu-24.04
-            container: ghcr.io/purplekarrot/clang-builder:master
+            container:
+              image: ghcr.io/purplekarrot/clang-builder:master
+              options: --hostname clang-builder
           - build-name: MacOS
             runs-on: macos-15
           - build-name: Windows
