@@ -44,4 +44,4 @@ jobs:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: Ninja
-          submit-url: "https://ci.purplekarrot.net/api/submit?project=CMake"
+          submit-url: "https://chorse.dev/api/submit?project=CMake"
