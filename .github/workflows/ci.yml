@@ -97,8 +97,8 @@ jobs:
             dependencies: libboost-dev libevent-dev
           - name: secp256k1
             repository: bitcoin-core/secp256k1
-          - name: Libmultiprocess
-            repository: chaincodelabs/libmultiprocess
+          - name: libmultiprocess
+            repository: bitcoin-core/libmultiprocess
             dependencies: capnproto libcapnp-dev
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
