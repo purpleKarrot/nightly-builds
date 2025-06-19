@@ -39,7 +39,7 @@ jobs:
         if: matrix.conf.runs-on == 'windows-2025'
 
       - name: Dashboard Build
-        uses: purpleKarrot/cmake-action@master
+        uses: chorse-dev/cmake-action@master
         with:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
