@@ -22,8 +22,13 @@ jobs:
             runs-on: macos-15
           - build-name: Windows
             runs-on: windows-2025
+        proj:
+          - name: CMake
+            repository: Kitware/CMake
+          - name: KWsys
+            repository: https://gitlab.kitware.com/purpleKarrot/kwsys.git
 
-    name: ${{ matrix.conf.build-name }}
+    name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
     runs-on: ${{ matrix.conf.runs-on }}
     container: ${{ matrix.conf.container }}
 
@@ -32,7 +37,7 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
         with:
-          repository: Kitware/CMake
+          repository: ${{ matrix.proj.repository }}
 
       - name: Visual Studio build environment
         uses: seanmiddleditch/gha-setup-vsdevenv@master
@@ -44,4 +49,4 @@ jobs:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: Ninja
-          submit-url: "https://chorse.dev/api/submit?project=CMake"
+          submit-url: "https://chorse.dev/api/submit?project=${{ matrix.proj.name }}"
