@@ -24,7 +24,7 @@ jobs:
             runs-on: windows-2025
         proj:
           - name: CMake
-            repository: Kitware/CMake
+            repository: https://gitlab.kitware.com/cmake/cmake.git
           - name: KWsys
             repository: https://gitlab.kitware.com/purpleKarrot/kwsys.git
 
@@ -35,9 +35,9 @@ jobs:
     steps:
       - name: Checkout Source Code
         id: checkout
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ matrix.proj.repository }}
+        run: |
+          git clone --depth 1 ${{ matrix.proj.repository }} .
+          echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Visual Studio build environment
         uses: seanmiddleditch/gha-setup-vsdevenv@master
