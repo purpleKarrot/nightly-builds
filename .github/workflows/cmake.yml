@@ -52,3 +52,4 @@ jobs:
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: Ninja
+          submit-url: "https://chorse.dev/api/submit?project=${{ matrix.proj.name }}"
