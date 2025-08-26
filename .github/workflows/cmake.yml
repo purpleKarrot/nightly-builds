@@ -39,6 +39,9 @@ jobs:
           git clone --depth 1 ${{ matrix.proj.repository }} .
           echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+
       - name: Visual Studio build environment
         uses: seanmiddleditch/gha-setup-vsdevenv@master
         if: matrix.conf.runs-on == 'windows-2025'
