@@ -97,6 +97,8 @@ jobs:
 
           - build-name: Windows
             runs-on: windows-2025
+            env:
+              FOO: bar
 
         proj:
           - name: Example
@@ -134,7 +136,7 @@ jobs:
       - name: Build clazy
         if: env.CXX == 'clazy'
         run: |
-          git clone --branch 1.16 --depth 1 https://github.com/KDE/clazy.git
+          git clone --branch v1.16 --depth 1 https://github.com/KDE/clazy.git
           env CXX=$CLANGXX cmake -S clazy -B clazy-build -DCMAKE_BUILD_TYPE=Release -G Ninja
           cmake --build clazy-build
           sudo cmake --install clazy-build
