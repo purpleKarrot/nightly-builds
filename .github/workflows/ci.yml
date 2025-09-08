@@ -1,6 +1,6 @@
 name: Nightly Builds
 on:
-  schedule: [{ cron: "49 04 * * *" }]
+  schedule: [{ cron: "49 03 * * *" }]
   workflow_dispatch:
 
 concurrency:
@@ -14,6 +14,7 @@ jobs:
       matrix:
         conf:
           - build-name: ASan
+            runs-on: ubuntu-24.04
             memorycheck-type: AddressSanitizer
             env:
               CC: clang-18
@@ -22,6 +23,7 @@ jobs:
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
 
           - build-name: Clazy
+            runs-on: ubuntu-24.04
             dependencies: llvm-18-dev libclang-18-dev
             env:
               CC: clang-18
@@ -30,6 +32,7 @@ jobs:
               LLVM_ROOT: /usr/lib/llvm-18
 
           - build-name: Coverage
+            runs-on: ubuntu-24.04
             coverage-command: gcov-14
             env:
               CC: gcc-14
@@ -38,6 +41,7 @@ jobs:
               CXXFLAGS: --coverage
 
           - build-name: MSan
+            runs-on: ubuntu-24.04
             memorycheck-type: MemorySanitizer
             env:
               CC: clang-18
@@ -46,6 +50,7 @@ jobs:
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=memory
 
           - build-name: TSan
+            runs-on: ubuntu-24.04
             memorycheck-type: ThreadSanitizer
             env:
               CC: clang-18
@@ -54,6 +59,7 @@ jobs:
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=thread
 
           - build-name: IWYU
+            runs-on: ubuntu-24.04
             dependencies: iwyu
             config-options: >
               -DCMAKE_C_INCLUDE_WHAT_YOU_USE=iwyu
@@ -64,6 +70,7 @@ jobs:
               CXX: clang++-17
 
           - build-name: Tidy
+            runs-on: ubuntu-24.04
             config-options: >
               -DCMAKE_C_CLANG_TIDY=clang-tidy-18
               -DCMAKE_CXX_CLANG_TIDY=clang-tidy-18
@@ -72,6 +79,7 @@ jobs:
               CXX: clang++-18
 
           - build-name: UBSan
+            runs-on: ubuntu-24.04
             memorycheck-type: UndefinedBehaviorSanitizer
             env:
               CC: clang-18
@@ -80,11 +88,15 @@ jobs:
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
 
           - build-name: Valgrind
+            runs-on: ubuntu-24.04
             dependencies: valgrind
             memorycheck-command: /usr/bin/valgrind
             env:
               CC: gcc-14
               CXX: g++-14
+
+          - build-name: Windows
+            runs-on: windows-2025
 
         proj:
           - name: Example
@@ -102,13 +114,13 @@ jobs:
             dependencies: capnproto libcapnp-dev
 
     name: ${{ matrix.proj.name }} ${{ matrix.conf.build-name }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.conf.runs-on }}
     env: ${{ matrix.conf.env }}
 
     steps:
       - name: Checkout Source Code
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ matrix.proj.repository }}
 
@@ -122,7 +134,7 @@ jobs:
       - name: Build clazy
         if: env.CXX == 'clazy'
         run: |
-          git clone --branch 1.13 --depth 1 https://github.com/KDE/clazy.git
+          git clone --branch 1.16 --depth 1 https://github.com/KDE/clazy.git
           env CXX=$CLANGXX cmake -S clazy -B clazy-build -DCMAKE_BUILD_TYPE=Release -G Ninja
           cmake --build clazy-build
           sudo cmake --install clazy-build
@@ -130,6 +142,10 @@ jobs:
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
+
+      - name: Visual Studio build environment
+        uses: seanmiddleditch/gha-setup-vsdevenv@master
+        if: matrix.conf.runs-on == 'windows-2025'
 
       - name: Dashboard Build
         uses: chorse-dev/cmake-action@master
