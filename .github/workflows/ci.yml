@@ -159,5 +159,5 @@ jobs:
           coverage-command: ${{ matrix.conf.coverage-command }}
           memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
-          submit-url: "https://chorse.dev/api/submit?project=${{ matrix.proj.name }}"
+          submit-url: "https://ci.chorse.dev/api/submit?project=${{ matrix.proj.name }}"
           use-launchers: ON
