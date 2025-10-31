@@ -108,7 +108,7 @@ jobs:
             dependencies: libgtest-dev
           - name: Bitcoin
             repository: bitcoin/bitcoin
-            dependencies: libboost-dev libevent-dev
+            dependencies: capnproto libboost-dev libcapnp-dev libevent-dev
           - name: secp256k1
             repository: bitcoin-core/secp256k1
           - name: libmultiprocess
