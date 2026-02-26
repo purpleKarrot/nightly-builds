@@ -1,6 +1,6 @@
 name: Nightly Builds
 on:
-  schedule: [{ cron: "49 03 * * *" }]
+  schedule: [{ cron: "49 02 * * *" }]
   workflow_dispatch:
 
 concurrency:
