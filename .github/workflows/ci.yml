@@ -14,102 +14,101 @@ jobs:
       matrix:
         conf:
           - build-name: ASan
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             memorycheck-type: AddressSanitizer
             env:
-              CC: clang-18
-              CXX: clang++-18
+              CC: clang-22
+              CXX: clang++-22
               CFLAGS: -fno-omit-frame-pointer -fsanitize=address
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
 
           - build-name: Clazy
-            runs-on: ubuntu-24.04
-            dependencies: llvm-18-dev libclang-18-dev
+            runs-on: ubuntu-26.04
+            dependencies: clazy
             env:
-              CC: clang-18
+              CC: clang-21
               CXX: clazy
-              CLANGXX: clang++-18
-              LLVM_ROOT: /usr/lib/llvm-18
+              CLANGXX: clang++-21
 
           - build-name: Coverage
-            runs-on: ubuntu-24.04
-            coverage-command: gcov-14
+            runs-on: ubuntu-26.04
+            coverage-command: gcov-15
             env:
-              CC: gcc-14
-              CXX: g++-14
+              CC: gcc-15
+              CXX: g++-15
               CFLAGS: --coverage
               CXXFLAGS: --coverage
 
           - build-name: MSan
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             memorycheck-type: MemorySanitizer
             env:
-              CC: clang-18
-              CXX: clang++-18
+              CC: clang-22
+              CXX: clang++-22
               CFLAGS: -fno-omit-frame-pointer -fsanitize=memory
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=memory
 
           - build-name: TSan
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             memorycheck-type: ThreadSanitizer
             env:
-              CC: clang-18
-              CXX: clang++-18
+              CC: clang-22
+              CXX: clang++-22
               CFLAGS: -fno-omit-frame-pointer -fsanitize=thread
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=thread
 
           - build-name: IWYU
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             dependencies: iwyu
             config-options: >
               -DCMAKE_C_INCLUDE_WHAT_YOU_USE=iwyu
               -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=iwyu
               -DCMAKE_LINK_WHAT_YOU_USE=ON
             env:
-              CC: clang-17
-              CXX: clang++-17
+              CC: clang-19
+              CXX: clang++-19
 
           - build-name: Tidy
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             config-options: >
-              -DCMAKE_C_CLANG_TIDY=clang-tidy-18
-              -DCMAKE_CXX_CLANG_TIDY=clang-tidy-18
+              -DCMAKE_C_CLANG_TIDY=clang-tidy-22
+              -DCMAKE_CXX_CLANG_TIDY=clang-tidy-22
             env:
-              CC: clang-18
-              CXX: clang++-18
+              CC: clang-22
+              CXX: clang++-22
 
           - build-name: UBSan
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             memorycheck-type: UndefinedBehaviorSanitizer
             env:
-              CC: clang-18
-              CXX: clang++-18
+              CC: clang-22
+              CXX: clang++-22
               CFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
               CXXFLAGS: -fno-omit-frame-pointer -fsanitize=undefined
 
           - build-name: Valgrind
-            runs-on: ubuntu-24.04
+            runs-on: ubuntu-26.04
             dependencies: valgrind
             memorycheck-command: /usr/bin/valgrind
             env:
-              CC: gcc-14
-              CXX: g++-14
+              CC: gcc-15
+              CXX: g++-15
 
           - build-name: Windows
-            runs-on: windows-2025
+            runs-on: windows-2025-vs2026
             env:
               FOO: bar
 
         proj:
-          - name: Example
+          - name: example
             repository: purpleKarrot/Example
           - name: beman.exemplar
             repository: bemanproject/exemplar
             dependencies: libgtest-dev
-          - name: Bitcoin
+          - name: bitcoin-core
             repository: bitcoin/bitcoin
             dependencies: capnproto libboost-dev libcapnp-dev libevent-dev
-          - name: secp256k1
+          - name: libsecp256k1
             repository: bitcoin-core/secp256k1
           - name: libmultiprocess
             repository: bitcoin-core/libmultiprocess
@@ -122,7 +121,7 @@ jobs:
     steps:
       - name: Checkout Source Code
         id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
         with:
           repository: ${{ matrix.proj.repository }}
 
@@ -133,21 +132,12 @@ jobs:
           sudo apt-get -qq install -y --no-install-recommends \
             ${{ matrix.conf.dependencies }} ${{ matrix.proj.dependencies }}
 
-      - name: Build clazy
-        if: env.CXX == 'clazy'
-        run: |
-          git clone --branch v1.16 --depth 1 https://github.com/KDE/clazy.git
-          env CXX=$CLANGXX cmake -S clazy -B clazy-build -DCMAKE_BUILD_TYPE=Release -G Ninja
-          cmake --build clazy-build
-          sudo cmake --install clazy-build
-          rm -rf clazy clazy-build
-
       - name: Setup CMake
-        uses: jwlawson/actions-setup-cmake@v2
+        uses: jwlawson/actions-setup-cmake@v2.2.0
 
       - name: Visual Studio build environment
-        uses: seanmiddleditch/gha-setup-vsdevenv@master
-        if: matrix.conf.runs-on == 'windows-2025'
+        uses: seanmiddleditch/gha-setup-vsdevenv@v5
+        if: matrix.conf.runs-on == 'windows-2025-vs2026'
 
       - name: Dashboard Build
         uses: chorse-dev/cmake-action@master
@@ -159,5 +149,5 @@ jobs:
           coverage-command: ${{ matrix.conf.coverage-command }}
           memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
-          submit-url: "https://ci.chorse.dev/api/submit?project=${{ matrix.proj.name }}"
+          submit-url: "https://ci.chorse.dev/api/submit?project=0f061fe4e6852250274ed3d786759168366c6a1cbdc1cc2dbb2d6a0e944cdb2b:${{ matrix.proj.name }}"
           use-launchers: ON
