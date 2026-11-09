@@ -142,6 +142,7 @@ jobs:
       - name: Dashboard Build
         uses: chorse-dev/cmake-action@master
         with:
+          model: Nightly
           build-name: ${{ matrix.conf.build-name }}
           change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: Ninja
