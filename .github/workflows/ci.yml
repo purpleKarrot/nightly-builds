@@ -148,6 +148,7 @@ jobs:
           cmake-generator: Ninja
           config-options: ${{ matrix.conf.config-options }}
           coverage-command: ${{ matrix.conf.coverage-command }}
+          http-header: "Authorization: Bearer ${{ secrets.CHORSE_SUBMISSION_TOKEN }}"
           memorycheck-command: ${{ matrix.conf.memorycheck-command }}
           memorycheck-type: ${{ matrix.conf.memorycheck-type }}
           submit-url: "https://ci.chorse.dev/api/submit?project=0f061fe4e6852250274ed3d786759168366c6a1cbdc1cc2dbb2d6a0e944cdb2b:${{ matrix.proj.name }}"
