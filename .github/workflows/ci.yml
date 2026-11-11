@@ -120,7 +120,6 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        id: checkout
         uses: actions/checkout@v7.0.1
         with:
           repository: ${{ matrix.proj.repository }}
@@ -144,7 +143,6 @@ jobs:
         with:
           model: Nightly
           build-name: ${{ matrix.conf.build-name }}
-          change-id: ${{ steps.checkout.outputs.commit }}
           cmake-generator: Ninja
           config-options: ${{ matrix.conf.config-options }}
           coverage-command: ${{ matrix.conf.coverage-command }}
